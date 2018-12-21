@@ -1,0 +1,378 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.5.1": {
+      "EasyNetQ/3.3.5": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2",
+          "RabbitMQ.Client": "5.1.0"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Configuration"
+        ],
+        "compile": {
+          "lib/net451/EasyNetQ.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EasyNetQ.dll": {}
+        }
+      },
+      "Microsoft.Diagnostics.Tracing.EventSource.Redist/1.1.28": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        }
+      },
+      "Newtonsoft.Json/10.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "RabbitMQ.Client/5.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Diagnostics.Tracing.EventSource.Redist": "1.1.28"
+        },
+        "compile": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        }
+      },
+      "lib60870/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/lib60870.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lib60870.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win": {
+      "EasyNetQ/3.3.5": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2",
+          "RabbitMQ.Client": "5.1.0"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Configuration"
+        ],
+        "compile": {
+          "lib/net451/EasyNetQ.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EasyNetQ.dll": {}
+        }
+      },
+      "Microsoft.Diagnostics.Tracing.EventSource.Redist/1.1.28": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        }
+      },
+      "Newtonsoft.Json/10.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "RabbitMQ.Client/5.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Diagnostics.Tracing.EventSource.Redist": "1.1.28"
+        },
+        "compile": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        }
+      },
+      "lib60870/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/lib60870.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lib60870.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win-x64": {
+      "EasyNetQ/3.3.5": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2",
+          "RabbitMQ.Client": "5.1.0"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Configuration"
+        ],
+        "compile": {
+          "lib/net451/EasyNetQ.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EasyNetQ.dll": {}
+        }
+      },
+      "Microsoft.Diagnostics.Tracing.EventSource.Redist/1.1.28": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        }
+      },
+      "Newtonsoft.Json/10.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "RabbitMQ.Client/5.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Diagnostics.Tracing.EventSource.Redist": "1.1.28"
+        },
+        "compile": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        }
+      },
+      "lib60870/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/lib60870.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lib60870.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.1/win-x86": {
+      "EasyNetQ/3.3.5": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "10.0.2",
+          "RabbitMQ.Client": "5.1.0"
+        },
+        "frameworkAssemblies": [
+          "System",
+          "System.Configuration"
+        ],
+        "compile": {
+          "lib/net451/EasyNetQ.dll": {}
+        },
+        "runtime": {
+          "lib/net451/EasyNetQ.dll": {}
+        }
+      },
+      "Microsoft.Diagnostics.Tracing.EventSource.Redist/1.1.28": {
+        "type": "package",
+        "compile": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        },
+        "runtime": {
+          "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll": {}
+        }
+      },
+      "Newtonsoft.Json/10.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "RabbitMQ.Client/5.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Diagnostics.Tracing.EventSource.Redist": "1.1.28"
+        },
+        "compile": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        },
+        "runtime": {
+          "lib/net451/RabbitMQ.Client.dll": {}
+        }
+      },
+      "lib60870/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/lib60870.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/lib60870.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "EasyNetQ/3.3.5": {
+      "sha512": "IgFfXydwLMdP11HEQJbAPjUu0goLwzK+pNzM4WDpoewqGJTn26hLPNlJCb39GSuA/XunhI0MTYxnrtVBXBaLdA==",
+      "type": "package",
+      "path": "easynetq/3.3.5",
+      "files": [
+        ".signature.p7s",
+        "easynetq.3.3.5.nupkg.sha512",
+        "easynetq.nuspec",
+        "lib/net451/EasyNetQ.dll",
+        "lib/netstandard2.0/EasyNetQ.dll"
+      ]
+    },
+    "Microsoft.Diagnostics.Tracing.EventSource.Redist/1.1.28": {
+      "sha512": "dhF0FwBC/oQbjN7ph1sq98j/CbVX+Jd6bqSvDoRk4JxMEFw4i7Pjh7JKYa+3lPo2c8aOzJcC0tgSyJOaTeugYQ==",
+      "type": "package",
+      "path": "microsoft.diagnostics.tracing.eventsource.redist/1.1.28",
+      "files": [
+        ".signature.p7s",
+        "License-Stable.rtf",
+        "lib/net35/Microsoft.Diagnostics.Tracing.EventSource.XML",
+        "lib/net35/Microsoft.Diagnostics.Tracing.EventSource.dll",
+        "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.XML",
+        "lib/net40/Microsoft.Diagnostics.Tracing.EventSource.dll",
+        "lib/net46/Microsoft.Diagnostics.Tracing.EventSource.XML",
+        "lib/net46/Microsoft.Diagnostics.Tracing.EventSource.dll",
+        "lib/portable-win8+wpa81/Microsoft.Diagnostics.Tracing.EventSource.XML",
+        "lib/portable-win8+wpa81/Microsoft.Diagnostics.Tracing.EventSource.dll",
+        "microsoft.diagnostics.tracing.eventsource.redist.1.1.28.nupkg.sha512",
+        "microsoft.diagnostics.tracing.eventsource.redist.nuspec"
+      ]
+    },
+    "Newtonsoft.Json/10.0.2": {
+      "sha512": "iwElSU2IXmwGvytJsezyDML2ZWDkG2JzTYzlU/BNlmzMdlmRvbnwITsGGY74gwVEpDli1UdOLkMT7/3jxWvXzA==",
+      "type": "package",
+      "path": "newtonsoft.json/10.0.2",
+      "files": [
+        "LICENSE.md",
+        "lib/net20/Newtonsoft.Json.dll",
+        "lib/net20/Newtonsoft.Json.xml",
+        "lib/net35/Newtonsoft.Json.dll",
+        "lib/net35/Newtonsoft.Json.xml",
+        "lib/net40/Newtonsoft.Json.dll",
+        "lib/net40/Newtonsoft.Json.xml",
+        "lib/net45/Newtonsoft.Json.dll",
+        "lib/net45/Newtonsoft.Json.xml",
+        "lib/netstandard1.0/Newtonsoft.Json.dll",
+        "lib/netstandard1.0/Newtonsoft.Json.xml",
+        "lib/netstandard1.3/Newtonsoft.Json.dll",
+        "lib/netstandard1.3/Newtonsoft.Json.xml",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.dll",
+        "lib/portable-net40+sl5+win8+wpa81+wp8/Newtonsoft.Json.xml",
+        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.dll",
+        "lib/portable-net45+win8+wpa81+wp8/Newtonsoft.Json.xml",
+        "newtonsoft.json.10.0.2.nupkg.sha512",
+        "newtonsoft.json.nuspec",
+        "tools/install.ps1"
+      ]
+    },
+    "RabbitMQ.Client/5.1.0": {
+      "sha512": "6TzFS2nlpiqKX7joVM+ViYY+rtHdYLnXkv2aNsXXJXlEbDhgf1iNBUgelPlgQUpKWoL9yUfMpTroNgEljB2HuA==",
+      "type": "package",
+      "path": "rabbitmq.client/5.1.0",
+      "files": [
+        ".signature.p7s",
+        "lib/net451/RabbitMQ.Client.dll",
+        "lib/net451/RabbitMQ.Client.xml",
+        "lib/netstandard1.5/RabbitMQ.Client.dll",
+        "lib/netstandard1.5/RabbitMQ.Client.xml",
+        "rabbitmq.client.5.1.0.nupkg.sha512",
+        "rabbitmq.client.nuspec"
+      ]
+    },
+    "lib60870/1.0.0": {
+      "type": "project",
+      "path": "../../lib60870/lib60870.csproj",
+      "msbuildProject": "../../lib60870/lib60870.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5.1": [
+      "EasyNetQ >= 3.3.5",
+      "lib60870 >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\ICE\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "E:\\git\\lib60870.NET\\examples\\cs104-client3\\cs104-client3.csproj",
+      "projectName": "cs104-client3",
+      "projectPath": "E:\\git\\lib60870.NET\\examples\\cs104-client3\\cs104-client3.csproj",
+      "packagesPath": "C:\\Users\\ICE\\.nuget\\packages\\",
+      "outputPath": "E:\\git\\lib60870.NET\\examples\\cs104-client3\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "configFilePaths": [
+        "C:\\Users\\ICE\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net451"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net451": {
+          "projectReferences": {
+            "E:\\git\\lib60870.NET\\lib60870\\lib60870.csproj": {
+              "projectPath": "E:\\git\\lib60870.NET\\lib60870\\lib60870.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net451": {
+        "dependencies": {
+          "EasyNetQ": {
+            "target": "Package",
+            "version": "[3.3.5, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\testclient3.exe
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\testclient3.pdb
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\lib60870.dll
+E:\git\lib60870.NET\examples\cs104-client3\obj\x86\Release\cs104-client3.csproj.CoreCompileInputs.cache
+E:\git\lib60870.NET\examples\cs104-client3\obj\x86\Release\cs104-client3.csproj.CopyComplete
+E:\git\lib60870.NET\examples\cs104-client3\obj\x86\Release\testclient3.exe
+E:\git\lib60870.NET\examples\cs104-client3\obj\x86\Release\testclient3.pdb
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\testclient3.exe.config
+E:\git\lib60870.NET\examples\cs104-client3\obj\x86\Release\cs104-client3.csprojAssemblyReference.cache
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\EasyNetQ.dll
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\Microsoft.Diagnostics.Tracing.EventSource.dll
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\Newtonsoft.Json.dll
+E:\git\lib60870.NET\examples\cs104-client3\bin\Release\RabbitMQ.Client.dll

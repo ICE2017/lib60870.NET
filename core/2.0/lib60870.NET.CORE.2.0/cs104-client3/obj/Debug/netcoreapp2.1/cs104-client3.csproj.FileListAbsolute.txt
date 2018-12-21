@@ -1,0 +1,14 @@
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\cs104-client3.deps.json
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\cs104-client3.runtimeconfig.json
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\cs104-client3.runtimeconfig.dev.json
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\cs104-client3.dll
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\cs104-client3.pdb
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\lib60870.NET.CORE.2.0.dll
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\bin\Debug\netcoreapp2.1\lib60870.NET.CORE.2.0.pdb
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.csprojAssemblyReference.cache
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.csproj.CoreCompileInputs.cache
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.AssemblyInfoInputs.cache
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.AssemblyInfo.cs
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.csproj.CopyComplete
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.dll
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\cs104-client3\obj\Debug\netcoreapp2.1\cs104-client3.pdb

@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.0",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.0": {
+      "cs104-client3/1.0.0": {
+        "dependencies": {
+          "lib60870.NET.CORE.2.0": "1.0.0"
+        },
+        "runtime": {
+          "cs104-client3.dll": {}
+        }
+      },
+      "lib60870.NET.CORE.2.0/1.0.0": {
+        "runtime": {
+          "lib60870.NET.CORE.2.0.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "cs104-client3/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "lib60870.NET.CORE.2.0/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

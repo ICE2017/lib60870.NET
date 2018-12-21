@@ -1,0 +1,8 @@
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\bin\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.deps.json
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\bin\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.dll
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\bin\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.pdb
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.csproj.CoreCompileInputs.cache
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.AssemblyInfoInputs.cache
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.AssemblyInfo.cs
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.dll
+E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Debug\netcoreapp2.0\lib60870.NET.CORE.2.0.pdb

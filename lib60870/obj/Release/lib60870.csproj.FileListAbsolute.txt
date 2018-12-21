@@ -1,0 +1,4 @@
+E:\git\lib60870.NET\lib60870\bin\Release\lib60870.dll
+E:\git\lib60870.NET\lib60870\obj\Release\lib60870.csprojAssemblyReference.cache
+E:\git\lib60870.NET\lib60870\obj\Release\lib60870.csproj.CoreCompileInputs.cache
+E:\git\lib60870.NET\lib60870\obj\Release\lib60870.dll

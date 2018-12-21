@@ -1,0 +1,52 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.1",
+    "signature": "a00f4db023f72d5a88632c0c44fd7c5f9064ed2c"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.1": {
+      "cs104-client3/1.0.0": {
+        "dependencies": {
+          "Polly": "6.1.2",
+          "lib60870.NET.CORE.2.0": "1.0.0"
+        },
+        "runtime": {
+          "cs104-client3.dll": {}
+        }
+      },
+      "Polly/6.1.2": {
+        "runtime": {
+          "lib/netstandard2.0/Polly.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.1.2.0"
+          }
+        }
+      },
+      "lib60870.NET.CORE.2.0/1.0.0": {
+        "runtime": {
+          "lib60870.NET.CORE.2.0.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "cs104-client3/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Polly/6.1.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-7/3aSOqShftUnp9PJ6DDMvBekcrPij7cisRJiSnKCKCjfEFNjhLM1oidwzrakyxplrnQ4+35HPcG3TuGEM0/xw==",
+      "path": "polly/6.1.2",
+      "hashPath": "polly.6.1.2.nupkg.sha512"
+    },
+    "lib60870.NET.CORE.2.0/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

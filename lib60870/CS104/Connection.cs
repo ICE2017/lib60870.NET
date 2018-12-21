@@ -22,7 +22,6 @@
  */
 
 using System;
-
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -31,7 +30,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
-
 using lib60870.CS101;
 
 namespace lib60870.CS104
@@ -66,7 +64,6 @@ namespace lib60870.CS104
         /// </summary>
         CONNECT_FAILED = 4
     }
-
     /// <summary>
     /// Provides some Connection statistics.
     /// </summary>
@@ -150,12 +147,10 @@ namespace lib60870.CS104
             }
         }
     }
-
     /// <summary>
     /// ASDU received handler.
     /// </summary>
     public delegate bool ASDUReceivedHandler(object parameter,ASDU asdu);
-
     /// <summary>
     /// Callback handler for connection events
     /// </summary>
@@ -166,17 +161,20 @@ namespace lib60870.CS104
     /// </summary>
     public class Connection : Master
     {
+        //启动数据传输 发送
         static byte[] STARTDT_ACT_MSG = new byte[] { 0x68, 0x04, 0x07, 0x00, 0x00, 0x00 };
-
+        //确认启动数据传输 接收
         static byte[] STARTDT_CON_MSG = new byte[] { 0x68, 0x04, 0x0b, 0x00, 0x00, 0x00 };
-
+        //停止数据发送
         static byte[] STOPDT_ACT_MSG = new byte[] { 0x68, 0x04, 0x13, 0x00, 0x00, 0x00 };
-
+        //确认停止数据接收
         static byte[] STOPDT_CON_MSG = new byte[] { 0x68, 0x04, 0x23, 0x00, 0x00, 0x00 };
-
+        //测试链路发送
         static byte[] TESTFR_ACT_MSG = new byte[] { 0x68, 0x04, 0x43, 0x00, 0x00, 0x00 };
-
+        //测试链路接收
         static byte[] TESTFR_CON_MSG = new byte[] { 0x68, 0x04, 0x83, 0x00, 0x00, 0x00 };
+        //总召唤命令
+        static byte[] C_IC_NA_1_MSG = new byte[] {0x68,0x0E,0x00,0x00,0x00,0x00,0x64,0x01,0x06,0x00,0x01,0x00,0x00,0x00,0x00,0x14 };
 
         private int sendSequenceNumber;
         private int receiveSequenceNumber;
@@ -408,19 +406,14 @@ namespace lib60870.CS104
 
         private bool CheckSequenceNumber(int seqNo)
         {
-
             if (checkSequenceNumbers)
             {
-
                 lock (sentASDUs)
                 {
-
                     /* check if received sequence number is valid */
-
                     bool seqNoIsValid = false;
                     bool counterOverflowDetected = false;
                     int oldestValidSeqNo = -1;
-
                     if (oldestSentASDU == -1)
                     { /* if k-Buffer is empty */
                         if (seqNo == sendSequenceNumber)
@@ -444,7 +437,6 @@ namespace lib60870.CS104
 
                             counterOverflowDetected = true;
                         }
-
                         /* check if confirmed message was already removed from list */
                         if (sentASDUs[oldestSentASDU].seqNo == 0)
                             oldestValidSeqNo = 32767;
@@ -454,16 +446,13 @@ namespace lib60870.CS104
                         if (oldestValidSeqNo == seqNo)
                             seqNoIsValid = true;
                     }
-
                     if (seqNoIsValid == false)
                     {
                         DebugLog("Received sequence number out of range");
                         return false;
                     }
-
                     if (oldestSentASDU != -1)
                     {
-
                         /* remove confirmed messages from list */
                         do
                         {
@@ -473,37 +462,28 @@ namespace lib60870.CS104
                                 if (seqNo < sentASDUs[oldestSentASDU].seqNo)
                                     break;
                             }
-
                             if (seqNo == oldestValidSeqNo)
                                 break;
-
                             if (sentASDUs[oldestSentASDU].seqNo == seqNo)
                             {
                                 /* we arrived at the seq# that has been confirmed */
-
                                 if (oldestSentASDU == newestSentASDU)
                                     oldestSentASDU = -1;
                                 else
                                     oldestSentASDU = (oldestSentASDU + 1) % maxSentASDUs;
-
                                 break;
                             }
-
                             oldestSentASDU = (oldestSentASDU + 1) % maxSentASDUs;
-
                             int checkIndex = (newestSentASDU + 1) % maxSentASDUs;
-
                             if (oldestSentASDU == checkIndex)
                             {
                                 oldestSentASDU = -1;
                                 break;
                             }
-
                         } while (true);
                     }
                 }
             }
-
             return true;
         }
 
@@ -512,9 +492,7 @@ namespace lib60870.CS104
 
             if (oldestSentASDU == -1)
                 return false;
-
             int newIndex = (newestSentASDU + 1) % maxSentASDUs;
-
             if (newIndex == oldestSentASDU)
                 return true;
             else
@@ -525,37 +503,26 @@ namespace lib60870.CS104
         {
             BufferFrame frame = new BufferFrame(new byte[260], 6); /* reserve space for ACPI */
             asdu.Encode(frame, alParameters);
-
             byte[] buffer = frame.GetBuffer();
-
             int msgSize = frame.GetMsgSize(); /* ACPI + ASDU */
-
             buffer[0] = 0x68;
-
             /* set size field */
             buffer[1] = (byte)(msgSize - 2);
-
             buffer[2] = (byte)((sendSequenceNumber % 128) * 2);
             buffer[3] = (byte)(sendSequenceNumber / 128);
-
             buffer[4] = (byte)((receiveSequenceNumber % 128) * 2);
             buffer[5] = (byte)(receiveSequenceNumber / 128);
-
             if (running)
             {
                 netStream.Write(buffer, 0, msgSize);
-
                 sendSequenceNumber = (sendSequenceNumber + 1) % 32768;
                 statistics.SentMsgCounter++;
-
                 unconfirmedReceivedIMessages = 0;
                 timeoutT2Triggered = false;
-
                 if (sentMessageHandler != null)
                 {
                     sentMessageHandler(sentMessageHandlerParameter, buffer, msgSize);
                 }
-
                 return sendSequenceNumber;
             }
             else
@@ -565,22 +532,15 @@ namespace lib60870.CS104
                 else
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
-
-
         }
 
         private void PrintSendBuffer()
         {
-
             if (oldestSentASDU != -1)
             {
-
                 int currentIndex = oldestSentASDU;
-
                 int nextIndex = 0;
-
                 DebugLog("------k-buffer------");
-
                 do
                 {
                     DebugLog(currentIndex + " : S " + sentASDUs[currentIndex].seqNo + " : time " +
@@ -883,8 +843,6 @@ namespace lib60870.CS104
 
             SendASDUInternal(asdu);
         }
-
-
         /// <summary>
         /// Sends a delay acquisition command (C_CD_NA_1 typeID: 106).
         /// </summary>
@@ -900,7 +858,6 @@ namespace lib60870.CS104
 
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends the control command.
         /// </summary>
@@ -922,14 +879,10 @@ namespace lib60870.CS104
         /// <exception cref="ConnectionException">description</exception>
         public override void SendControlCommand(CauseOfTransmission cot, int ca, InformationObject sc)
         {
-
             ASDU controlCommand = new ASDU(alParameters, cot, false, false, (byte)alParameters.OA, ca, false);
-
             controlCommand.AddInformationObject(sc);
-
             SendASDUInternal(controlCommand);
         }
-
         /// <summary>
         /// Sends an arbitrary ASDU to the connected slave
         /// </summary>
@@ -938,12 +891,10 @@ namespace lib60870.CS104
         {
             SendASDUInternal(asdu);
         }
-
         public override ApplicationLayerParameters GetApplicationLayerParameters()
         {
             return alParameters;
         }
-
         /// <summary>
         /// Start data transmission on this connection
         /// </summary>
@@ -952,9 +903,7 @@ namespace lib60870.CS104
             if (running)
             {
                 netStream.Write(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
-
                 statistics.SentMsgCounter++;
-
                 if (sentMessageHandler != null)
                 {
                     sentMessageHandler(sentMessageHandlerParameter, STARTDT_ACT_MSG, 6);
@@ -968,7 +917,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
         /// <summary>
         /// Stop data transmission on this connection
         /// </summary>
@@ -992,8 +940,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
-
         protected void SendStartDT_CON()
         {
             if (running)
@@ -1013,7 +959,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
         protected void SendStopDT_CON()
         {
             if (running)
@@ -1033,7 +978,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
         protected void SendTestFR_ACT()
         {
             if (running)
@@ -1053,7 +997,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
         protected void SendTestFR_CON()
         {
             if (running)
@@ -1073,7 +1016,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
-
         /// <summary>
         /// Connect this instance.
         /// </summary>
@@ -1082,24 +1024,18 @@ namespace lib60870.CS104
         /// <exception cref="ConnectionException">description</exception>
         public void Connect()
         {
-
             ConnectAsync();
-
-
             while ((running == false) && (socketError == false))
             {
                 Thread.Sleep(1);
             }
-
             if (socketError)
                 throw new ConnectionException(lastException.Message, lastException);
         }
-
         private void ResetT3Timeout()
         {
             nextT3Timeout = (UInt64)SystemUtils.currentTimeMillis() + (UInt64)(apciParameters.T3 * 1000);
         }
-
         /// <summary>
         /// Connects to the server (outstation). This is a non-blocking call. Before using the connection
         /// you have to check if the connection is already connected and running.
@@ -1110,11 +1046,8 @@ namespace lib60870.CS104
             if ((running == false) && (connecting == false))
             {
                 ResetConnection();
-
                 ResetT3Timeout();
-
                 workerThread = new Thread(HandleConnection);
-
                 workerThread.Start();
             }
             else
@@ -1126,7 +1059,6 @@ namespace lib60870.CS104
 
             }
         }
-
         private int receiveMessage(byte[] buffer)
         {
             int readLength = 0;
@@ -1165,7 +1097,6 @@ namespace lib60870.CS104
 
             return readLength;
         }
-
         private bool checkConfirmTimeout(long currentTime)
         {
             if ((currentTime - lastConfirmationTime) >= (apciParameters.T2 * 1000))
@@ -1173,7 +1104,6 @@ namespace lib60870.CS104
             else
                 return false;
         }
-
         private bool checkMessage(byte[] buffer, int msgSize)
         {
             long currentTime = SystemUtils.currentTimeMillis();
@@ -1246,23 +1176,18 @@ namespace lib60870.CS104
             }
             else if ((buffer[2] & 0x03) == 0x03)
             { /* U format frame */
-
                 uMessageTimeout = 0;
-
                 if (buffer[2] == 0x43)
                 { // Check for TESTFR_ACT message
                     statistics.RcvdTestFrActCounter++;
                     DebugLog("RCVD TESTFR_ACT");
                     DebugLog("SEND TESTFR_CON");
-
                     netStream.Write(TESTFR_CON_MSG, 0, TESTFR_CON_MSG.Length);
-
                     statistics.SentMsgCounter++;
                     if (sentMessageHandler != null)
                     {
                         sentMessageHandler(sentMessageHandlerParameter, TESTFR_CON_MSG, 6);
                     }
-
                 }
                 else if (buffer[2] == 0x83)
                 { /* TESTFR_CON */
@@ -1273,9 +1198,7 @@ namespace lib60870.CS104
                 else if (buffer[2] == 0x07)
                 { /* STARTDT ACT */
                     DebugLog("RCVD STARTDT_ACT");
-
                     netStream.Write(STARTDT_CON_MSG, 0, STARTDT_CON_MSG.Length);
-
                     statistics.SentMsgCounter++;
                     if (sentMessageHandler != null)
                     {
@@ -1285,10 +1208,14 @@ namespace lib60870.CS104
                 else if (buffer[2] == 0x0b)
                 { /* STARTDT_CON */
                     DebugLog("RCVD STARTDT_CON");
-
+                    //发送总召唤命令
+                    netStream.Write(C_IC_NA_1_MSG, 0, C_IC_NA_1_MSG.Length);
+                    sendSequenceNumber = (sendSequenceNumber + 1) % 32768;
+                    statistics.SentMsgCounter++;
+                    unconfirmedReceivedIMessages = 0;
+                    timeoutT2Triggered = false;
                     if (connectionHandler != null)
                         connectionHandler(connectionHandlerParameter, ConnectionEvent.STARTDT_CON_RECEIVED);
-
                 }
                 else if (buffer[2] == 0x23)
                 { /* STOPDT_CON */
@@ -1304,13 +1231,9 @@ namespace lib60870.CS104
                 DebugLog("Unknown message type");
                 return false;
             }
-
             ResetT3Timeout();
-
             return true;
         }
-
-
         private bool isConnected()
         {
             try
@@ -1336,12 +1259,10 @@ namespace lib60870.CS104
                 }
             }
         }
-
         private void ConnectSocketWithTimeout()
         {
             IPAddress ipAddress;
             IPEndPoint remoteEP;
-
             try
             {
                 ipAddress = IPAddress.Parse(hostname);
@@ -1370,9 +1291,7 @@ namespace lib60870.CS104
                 catch (ObjectDisposedException)
                 {
                     socket = null;
-
                     DebugLog("ObjectDisposedException -> Connect canceled");
-
                     throw new SocketException(995); // WSA_OPERATION_ABORTED
                 }
             }
@@ -1380,29 +1299,24 @@ namespace lib60870.CS104
             {
                 socket.Close();
                 socket = null;
-
                 throw new SocketException(10060); // Connection timed out (WSAETiMEDOUT)
             }
         }
-
         private bool handleTimeouts()
         {
             UInt64 currentTime = (UInt64)SystemUtils.currentTimeMillis();
 
             if (currentTime > nextT3Timeout)
             {
-
                 if (outStandingTestFRConMessages > 2)
                 {
                     DebugLog("Timeout for TESTFR_CON message");
-
                     // close connection
                     return false;
                 }
                 else
                 {
                     netStream.Write(TESTFR_ACT_MSG, 0, TESTFR_ACT_MSG.Length);
-
                     statistics.SentMsgCounter++;
                     DebugLog("U message T3 timeout");
                     uMessageTimeout = (UInt64)currentTime + (UInt64)(apciParameters.T1 * 1000);
@@ -1452,7 +1366,6 @@ namespace lib60870.CS104
 
             return true;
         }
-
         private bool AreByteArraysEqual(byte[] array1, byte[] array2)
         {
             if (array1.Length == array2.Length)
@@ -1469,7 +1382,6 @@ namespace lib60870.CS104
             else
                 return false;
         }
-
         private bool CertificateValidation(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
             if (certificate != null)
@@ -1513,42 +1425,28 @@ namespace lib60870.CS104
             else
                 return false;
         }
-
         public X509Certificate LocalCertificateSelectionCallback(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers)
         {
             return localCertificates[0];
         }
-
-
         private void HandleConnection()
         {
-
             byte[] bytes = new byte[300];
-
             try
             {
-
                 try
                 {
-
                     connecting = true;
-
                     try
                     {
                         // Connect to a remote device.
                         ConnectSocketWithTimeout();
-
                         DebugLog("Socket connected to " + socket.RemoteEndPoint.ToString());
-
                         if (tlsSecInfo != null)
                         {
-
                             DebugLog("Setup TLS");
-
                             SslStream sslStream = new SslStream(netStream, true, CertificateValidation, LocalCertificateSelectionCallback);
-
                             var clientCertificateCollection = new X509Certificate2Collection(tlsSecInfo.OwnCertificate);
-
                             try
                             {
                                 string targetHostName = tlsSecInfo.TargetHostName;
@@ -1590,63 +1488,44 @@ namespace lib60870.CS104
                             }
 
                         }
-
                         netStream.ReadTimeout = 50;
-
                         if (autostart)
                         {
+                            //启动数据传输 [0x68,0x04,0x07,0x00,0x00,0x00]
                             netStream.Write(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
-
                             statistics.SentMsgCounter++;
                         }
-
                         running = true;
                         socketError = false;
                         connecting = false;
-
                         if (connectionHandler != null)
                             connectionHandler(connectionHandlerParameter, ConnectionEvent.OPENED);
-
                     }
                     catch (SocketException se)
                     {
                         DebugLog("SocketException: " + se.ToString());
-
-                        running = false;
                         socketError = true;
                         lastException = se;
-
                         if (connectionHandler != null)
                             connectionHandler(connectionHandlerParameter, ConnectionEvent.CONNECT_FAILED);
                     }
-
                     if (running)
                     {
-
                         bool loopRunning = running;
-
                         while (loopRunning)
                         {
-
                             bool suspendThread = true;
-
                             try
                             {
                                 // Receive a message from from the remote device.
                                 int bytesRec = receiveMessage(bytes);
-
                                 if (bytesRec > 0)
                                 {
-
                                     DebugLog("RCVD: " + BitConverter.ToString(bytes, 0, bytesRec));
-
                                     statistics.RcvdMsgCounter++;
-
                                     bool handleMessage = true;
-
                                     if (recvRawMessageHandler != null)
                                         handleMessage = recvRawMessageHandler(recvRawMessageHandlerParameter, bytes, bytesRec);
-
                                     if (handleMessage)
                                     {
                                         if (checkMessage(bytes, bytesRec) == false)
@@ -1655,23 +1534,17 @@ namespace lib60870.CS104
                                             loopRunning = false;
                                         }
                                     }
-
                                     if (unconfirmedReceivedIMessages >= apciParameters.W)
                                     {
                                         lastConfirmationTime = SystemUtils.currentTimeMillis();
-
                                         unconfirmedReceivedIMessages = 0;
                                         timeoutT2Triggered = false;
-
                                         SendSMessage();
                                     }
-
                                     suspendThread = false;
                                 }
                                 else if (bytesRec == -1)
                                     loopRunning = false;
-
-
                                 if (handleTimeouts() == false)
                                     loopRunning = false;
 
@@ -1683,10 +1556,8 @@ namespace lib60870.CS104
                                     if (SendNextWaitingASDU() == true)
                                         suspendThread = false;
                                 }
-
                                 if (suspendThread)
                                     Thread.Sleep(1);
-
                             }
                             catch (SocketException)
                             {
@@ -1702,9 +1573,7 @@ namespace lib60870.CS104
                                 loopRunning = false;
                             }
                         }
-
                         DebugLog("CLOSE CONNECTION!");
-
                         // Release the socket.
                         try
                         {
@@ -1713,15 +1582,12 @@ namespace lib60870.CS104
                         catch (SocketException)
                         {
                         }
-
                         socket.Close();
-
                         netStream.Dispose();
-
+                        this.running = false;
                         if (connectionHandler != null)
                             connectionHandler(connectionHandlerParameter, ConnectionEvent.CLOSED);
                     }
-
                 }
                 catch (ArgumentNullException ane)
                 {
@@ -1735,18 +1601,19 @@ namespace lib60870.CS104
                 catch (Exception e)
                 {
                     DebugLog("Unexpected exception: " + e.ToString());
+                    throw e;
                 }
 
             }
             catch (Exception e)
             {
                 DebugLog(e.ToString());
+                throw e;
             }
 
             running = false;
             connecting = false;
         }
-
         public bool IsRunning
         {
             get
@@ -1754,13 +1621,11 @@ namespace lib60870.CS104
                 return this.running;
             }
         }
-
         public void Cancel()
         {
             if (socket != null)
                 socket.Close();
         }
-
         public void Close()
         {
             if (running)
@@ -1769,7 +1634,6 @@ namespace lib60870.CS104
                 workerThread.Join();
             }
         }
-
         /// <summary>
         /// Set the ASDUReceivedHandler. This handler is invoked whenever a new ASDU is received
         /// </summary>
@@ -1780,7 +1644,6 @@ namespace lib60870.CS104
             asduReceivedHandler = handler;
             asduReceivedHandlerParameter = parameter;
         }
-
         /// <summary>
         /// Sets the connection handler. The connection handler is called when
         /// the connection is established or closed
@@ -1792,7 +1655,6 @@ namespace lib60870.CS104
             connectionHandler = handler;
             connectionHandlerParameter = parameter;
         }
-
         /// <summary>
         /// Sets the raw message handler. This is a callback to intercept raw messages received.
         /// </summary>
@@ -1803,7 +1665,6 @@ namespace lib60870.CS104
             recvRawMessageHandler = handler;
             recvRawMessageHandlerParameter = parameter;
         }
-
         /// <summary>
         /// Sets the sent message handler. This is a callback to intercept the sent raw messages
         /// </summary>
@@ -1814,7 +1675,6 @@ namespace lib60870.CS104
             sentMessageHandler = handler;
             sentMessageHandlerParameter = parameter;
         }
-
         /// <summary>
         /// Determines whether the transmit (send) buffer is full. If true the next send command will throw a ConnectionException
         /// </summary>
@@ -1826,7 +1686,6 @@ namespace lib60870.CS104
             else
                 return IsSentBufferFull();
         }
-
         public override void GetFile(int ca, int ioa, NameOfFile nof, IFileReceiver receiver)
         {
             if (fileClient == null)
@@ -1834,7 +1693,6 @@ namespace lib60870.CS104
 
             fileClient.RequestFile(ca, ioa, nof, receiver);
         }
-
         public void GetDirectory(int ca)
         {
             ASDU getDirectoryAsdu = new ASDU(GetApplicationLayerParameters(), CauseOfTransmission.REQUEST, false, false, 0, ca, false);
