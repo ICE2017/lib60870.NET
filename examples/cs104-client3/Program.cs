@@ -8,21 +8,25 @@ using lib60870;
 using lib60870.CS101;
 using lib60870.CS104;
 using Polly;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 namespace cs104_client3
 {
 	class MainClass
 	{
         private static Connection con;
         //ivate static IBus bus= RabbitHutch.CreateBus("host=localhost");
-
+        private static Dictionary<int, double> keyValuePairs = new Dictionary<int, double>();
 		public static void Main (string[] args)
 		{
-			Console.WriteLine ("Using lib60870.NET version " + LibraryCommon.GetLibraryVersionString ());
-
+			//Console.WriteLine ("Using lib60870.NET version " + LibraryCommon.GetLibraryVersionString ());
             try
             {
-                var retryTwoTimesPolicy = Policy.Handle<Exception>().Retry(3,
+                var retryTwoTimesPolicy = Policy.Handle<Exception>().WaitAndRetry(new[]{
+                    TimeSpan.FromSeconds(3),
+                    TimeSpan.FromSeconds(5),
+                    TimeSpan.FromSeconds(7)
+                },
                     (ex, count) => {
                         Console.WriteLine("执行失败! 重试次数 {0}", count);
                         Console.WriteLine("异常来自 {0}", ex.GetType().Name);
@@ -31,19 +35,18 @@ namespace cs104_client3
                     con = new Connection("192.168.216.60", 2410);
                     con.DebugOutput = true;
                     con.SetASDUReceivedHandler((parameter, asdu) => {
-                        Console.WriteLine(asdu.ToString());
                         if (asdu.TypeId == TypeID.M_ME_NC_1)
                         {
                             for (int i = 0; i < asdu.NumberOfElements; i++)
                             {
                                 var mfv = (MeasuredValueShort)asdu.GetElement(i);
-                                Console.WriteLine("  IOA: " + mfv.ObjectAddress + " float value: " + mfv.Value);
-                                Console.WriteLine("   " + mfv.Quality.ToString());
+                           //     Console.Write("点位地址:" + mfv.ObjectAddress + " 氧气流量：" + mfv.Value);
+
                             }
                         }
                         else
                         {
-                            Console.WriteLine("Unknown message type!");
+                            //Console.WriteLine("Unknown message type!=="+ asdu.TypeId);
                         }
                         return true;
                     }, null);
@@ -64,10 +67,7 @@ namespace cs104_client3
                                 break;
                         }
                     }, null);
-                    con.SetReceivedRawMessageHandler(( parameter,message,messageSize) => {
-                        Console.WriteLine("====="+BitConverter.ToString(message));
-                        return true;
-                    }, null);
+                    con.DebugOutput = true;                   
                     con.Connect();
                 });
 
@@ -76,18 +76,15 @@ namespace cs104_client3
             {
                 Console.WriteLine(ex.Message);
             }
-
-
             bool running = true;           
             Console.CancelKeyPress += delegate(object sender, ConsoleCancelEventArgs e) {
 				e.Cancel = true;
 				running = false;
 			};
-
 			while (running) {
 				Thread.Sleep(100);
 			}
 			con.Close ();
 		}
-	}
+    }
 }

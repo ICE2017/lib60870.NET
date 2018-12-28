@@ -31,7 +31,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using lib60870.CS101;
-
+using System.Threading.Tasks;
 namespace lib60870.CS104
 {
     /// <summary>
@@ -151,6 +151,8 @@ namespace lib60870.CS104
     /// ASDU received handler.
     /// </summary>
     public delegate bool ASDUReceivedHandler(object parameter,ASDU asdu);
+
+    public delegate void DebugOutputHandler(String msg);
     /// <summary>
     /// Callback handler for connection events
     /// </summary>
@@ -208,9 +210,6 @@ namespace lib60870.CS104
 
         private UInt64 nextT3Timeout;
         private int outStandingTestFRConMessages = 0;
-
-        private Thread workerThread = null;
-
         private int unconfirmedReceivedIMessages;
         /* number of unconfirmed messages received */
 
@@ -221,7 +220,6 @@ namespace lib60870.CS104
 
         private Socket socket = null;
         private Stream netStream = null;
-        private TlsSecurityInformation tlsSecInfo = null;
 
         private bool autostart = true;
 
@@ -330,7 +328,16 @@ namespace lib60870.CS104
         private void DebugLog(string message)
         {
             if (debugOutput)
-                Console.WriteLine("CS104 MASTER CONNECTION " + connectionID + ": " + message);
+            {
+                if (debugOutputHandler != null)
+                {
+                    debugOutputHandler(message);
+                }
+                else
+                {
+                    Console.WriteLine("CS104 MASTER CONNECTION " + connectionID + ": " + message);
+                }
+            }
         }
 
         private ConnectionStatistics statistics = new ConnectionStatistics();
@@ -372,6 +379,7 @@ namespace lib60870.CS104
         }
 
         private ASDUReceivedHandler asduReceivedHandler = null;
+        private DebugOutputHandler debugOutputHandler = null;
         private object asduReceivedHandlerParameter = null;
 
         private ConnectionHandler connectionHandler = null;
@@ -394,7 +402,7 @@ namespace lib60870.CS104
             msg[4] = (byte)((receiveSequenceNumber % 128) * 2);
             msg[5] = (byte)(receiveSequenceNumber / 128);
 
-            netStream.Write(msg, 0, msg.Length);
+            netStream.WriteAsync(msg, 0, msg.Length);
 
             statistics.SentMsgCounter++;
 
@@ -427,14 +435,12 @@ namespace lib60870.CS104
                             if ((seqNo >= sentASDUs[oldestSentASDU].seqNo) &&
                                 (seqNo <= sentASDUs[newestSentASDU].seqNo))
                                 seqNoIsValid = true;
-
                         }
                         else
                         {
                             if ((seqNo >= sentASDUs[oldestSentASDU].seqNo) ||
                                 (seqNo <= sentASDUs[newestSentASDU].seqNo))
                                 seqNoIsValid = true;
-
                             counterOverflowDetected = true;
                         }
                         /* check if confirmed message was already removed from list */
@@ -442,7 +448,6 @@ namespace lib60870.CS104
                             oldestValidSeqNo = 32767;
                         else
                             oldestValidSeqNo = sentASDUs[oldestSentASDU].seqNo - 1;
-
                         if (oldestValidSeqNo == seqNo)
                             seqNoIsValid = true;
                     }
@@ -562,16 +567,14 @@ namespace lib60870.CS104
         {
             lock (sentASDUs)
             {
-
                 int currentIndex = 0;
-
                 if (oldestSentASDU == -1)
                 {
                     oldestSentASDU = 0;
                     newestSentASDU = 0;
 
                 }
-                else
+                else 
                 {
                     currentIndex = (newestSentASDU + 1) % maxSentASDUs;
                 }
@@ -622,10 +625,8 @@ namespace lib60870.CS104
                 running = false;
                 throw new ConnectionException("connection lost");
             }
-
             return sentAsdu;
         }
-
         private void SendASDUInternal(ASDU asdu)
         {
             lock (socket)
@@ -653,7 +654,6 @@ namespace lib60870.CS104
                 }
             }
         }
-
         private void Setup(string hostname, APCIParameters apciParameters, ApplicationLayerParameters alParameters, int tcpPort)
         {
             this.hostname = hostname;
@@ -661,11 +661,9 @@ namespace lib60870.CS104
             this.apciParameters = apciParameters;
             this.tcpPort = tcpPort;
             this.connectTimeoutInMs = apciParameters.T0 * 1000;
-
             connectionCounter++;
             connectionID = connectionCounter;
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="lib60870.CS104.Connection"/> class.
         /// </summary>
@@ -700,18 +698,6 @@ namespace lib60870.CS104
         }
 
         /// <summary>
-        /// Set the security parameters for TLS
-        /// </summary>
-        /// <param name="securityInfo">Security info.</param>
-        public void SetTlsSecurity(TlsSecurityInformation securityInfo)
-        {
-            tlsSecInfo = securityInfo;
-
-            if (securityInfo != null)
-                this.tcpPort = 19998;
-        }
-
-        /// <summary>
         /// Gets the conenction statistics.
         /// </summary>
         /// <returns>The connection statistics.</returns>
@@ -739,9 +725,7 @@ namespace lib60870.CS104
         public override void SendInterrogationCommand(CauseOfTransmission cot, int ca, byte qoi)
         {
             ASDU asdu = new ASDU(alParameters, cot, false, false, (byte)alParameters.OA, ca, false);
-
             asdu.AddInformationObject(new InterrogationCommand(0, qoi));
-
             SendASDUInternal(asdu);
         }
 
@@ -755,9 +739,7 @@ namespace lib60870.CS104
         public override void SendCounterInterrogationCommand(CauseOfTransmission cot, int ca, byte qcc)
         {
             ASDU asdu = new ASDU(alParameters, cot, false, false, (byte)alParameters.OA, ca, false);
-
             asdu.AddInformationObject(new CounterInterrogationCommand(0, qcc));
-
             SendASDUInternal(asdu);
         }
 
@@ -822,9 +804,7 @@ namespace lib60870.CS104
         public override void SendTestCommandWithCP56Time2a(int ca, ushort tsc, CP56Time2a time)
         {
             ASDU asdu = new ASDU(alParameters, CauseOfTransmission.ACTIVATION, false, false, (byte)alParameters.OA, ca, false);
-
             asdu.AddInformationObject(new TestCommandWithCP56Time2a(tsc, time));
-
             SendASDUInternal(asdu);
         }
 
@@ -838,9 +818,7 @@ namespace lib60870.CS104
         public override void SendResetProcessCommand(CauseOfTransmission cot, int ca, byte qrp)
         {
             ASDU asdu = new ASDU(alParameters, CauseOfTransmission.ACTIVATION, false, false, (byte)alParameters.OA, ca, false);
-
             asdu.AddInformationObject(new ResetProcessCommand(0, qrp));
-
             SendASDUInternal(asdu);
         }
         /// <summary>
@@ -1025,10 +1003,6 @@ namespace lib60870.CS104
         public void Connect()
         {
             ConnectAsync();
-            while ((running == false) && (socketError == false))
-            {
-                Thread.Sleep(1);
-            }
             if (socketError)
                 throw new ConnectionException(lastException.Message, lastException);
         }
@@ -1047,8 +1021,9 @@ namespace lib60870.CS104
             {
                 ResetConnection();
                 ResetT3Timeout();
-                workerThread = new Thread(HandleConnection);
-                workerThread.Start();
+                Task.Run(() => {
+                    HandleConnection();
+                });
             }
             else
             {
@@ -1062,36 +1037,24 @@ namespace lib60870.CS104
         private int receiveMessage(byte[] buffer)
         {
             int readLength = 0;
-
             //if (netStream.DataAvailable) {
-
-            if (socket.Poll(50, SelectMode.SelectRead))
+            if (socket.Poll(30, SelectMode.SelectRead))
             {
-                // wait for first byte
-                if (netStream.Read(buffer, 0, 1) != 1)
+                if (netStream.ReadAsync(buffer, 0, 1).Result != 1)
                     return -1;
-
                 if (buffer[0] != 0x68)
                 {
                     DebugLog("Missing SOF indicator!");
-
                     return -1;
                 }
-
-                // read length byte
-                if (netStream.Read(buffer, 1, 1) != 1)
+                if (netStream.ReadAsync(buffer, 1, 1).Result != 1)
                     return -1;
-
                 int length = buffer[1];
-
-                // read remaining frame
-                if (netStream.Read(buffer, 2, length) != length)
+                if (netStream.ReadAsync(buffer, 2, length).Result != length)
                 {
                     DebugLog("Failed to read complete frame!");
-
                     return -1;
                 }
-
                 readLength = length + 2;
             }
 
@@ -1107,55 +1070,40 @@ namespace lib60870.CS104
         private bool checkMessage(byte[] buffer, int msgSize)
         {
             long currentTime = SystemUtils.currentTimeMillis();
-
             if ((buffer[2] & 1) == 0)
             { /* I format frame */
-
                 if (timeoutT2Triggered == false)
                 {
                     timeoutT2Triggered = true;
                     lastConfirmationTime = currentTime; /* start timeout T2 */
                 }
-
                 if (msgSize < 7)
-                {
+                {               
                     DebugLog("I msg too small!");
                     return false;
                 }
-
                 int frameSendSequenceNumber = ((buffer[3] * 0x100) + (buffer[2] & 0xfe)) / 2;
                 int frameRecvSequenceNumber = ((buffer[5] * 0x100) + (buffer[4] & 0xfe)) / 2;
-
-                DebugLog("Received I frame: N(S) = " + frameSendSequenceNumber + " N(R) = " + frameRecvSequenceNumber);
-
+                DebugLog("接收到 I 帧数据: N(S) = " + frameSendSequenceNumber + " N(R) = " + frameRecvSequenceNumber);
+                DebugLog(BitConverter.ToString(buffer, 0, msgSize));
                 /* check the receive sequence number N(R) - connection will be closed on an unexpected value */
                 if (frameSendSequenceNumber != receiveSequenceNumber)
                 {
                     DebugLog("Sequence error: Close connection!");
                     return false;
                 }
-
-                if (CheckSequenceNumber(frameRecvSequenceNumber) == false)
-                    return false;
-
                 receiveSequenceNumber = (receiveSequenceNumber + 1) % 32768;
                 unconfirmedReceivedIMessages++;
-
                 try
                 {
                     ASDU asdu = new ASDU(alParameters, buffer, 6, msgSize);
-
                     bool messageHandled = false;
-
                     if (fileClient != null)
                         messageHandled = fileClient.HandleFileAsdu(asdu);
-
                     if (messageHandled == false)
                     {
-
                         if (asduReceivedHandler != null)
                             asduReceivedHandler(asduReceivedHandlerParameter, asdu);
-
                     }
                 }
                 catch (ASDUParsingException e)
@@ -1163,25 +1111,23 @@ namespace lib60870.CS104
                     DebugLog("ASDU parsing failed: " + e.Message);
                     return false;
                 }
-
             }
             else if ((buffer[2] & 0x03) == 0x01)
             { /* S format frame */
                 int seqNo = (buffer[4] + buffer[5] * 0x100) / 2;
-
-                DebugLog("Recv S(" + seqNo + ") (own sendcounter = " + sendSequenceNumber + ")");
-
+                DebugLog("接收到 S帧(" + seqNo + ") (own sendcounter = " + sendSequenceNumber + ")");
+                DebugLog(BitConverter.ToString(buffer, 0, msgSize));
                 if (CheckSequenceNumber(seqNo) == false)
                     return false;
             }
             else if ((buffer[2] & 0x03) == 0x03)
-            { /* U format frame */
+            { 
                 uMessageTimeout = 0;
                 if (buffer[2] == 0x43)
-                { // Check for TESTFR_ACT message
+                { 
                     statistics.RcvdTestFrActCounter++;
-                    DebugLog("RCVD TESTFR_ACT");
-                    DebugLog("SEND TESTFR_CON");
+                    DebugLog("RCVD U帧测试帧:"+BitConverter.ToString(buffer,0,msgSize));
+                    DebugLog("SEND 应答U帧测试帧:" + BitConverter.ToString(TESTFR_CON_MSG,0, TESTFR_CON_MSG.Length));
                     netStream.Write(TESTFR_CON_MSG, 0, TESTFR_CON_MSG.Length);
                     statistics.SentMsgCounter++;
                     if (sentMessageHandler != null)
@@ -1191,40 +1137,39 @@ namespace lib60870.CS104
                 }
                 else if (buffer[2] == 0x83)
                 { /* TESTFR_CON */
-                    DebugLog("RCVD TESTFR_CON");
+                    DebugLog("RCVD 应答U帧测试帧:" + BitConverter.ToString(buffer, 0, msgSize));
                     statistics.RcvdTestFrConCounter++;
                     outStandingTestFRConMessages = 0;
                 }
                 else if (buffer[2] == 0x07)
                 { /* STARTDT ACT */
-                    DebugLog("RCVD STARTDT_ACT");
+                    DebugLog("RCVD 激活传输启动:"+BitConverter.ToString(buffer, 0, msgSize));
+                    DebugLog("SEND 确认激活传输启动:" + BitConverter.ToString(STARTDT_CON_MSG, 0, STARTDT_CON_MSG.Length));
                     netStream.Write(STARTDT_CON_MSG, 0, STARTDT_CON_MSG.Length);
-                    statistics.SentMsgCounter++;
                     if (sentMessageHandler != null)
                     {
                         sentMessageHandler(sentMessageHandlerParameter, STARTDT_CON_MSG, 6);
                     }
                 }
                 else if (buffer[2] == 0x0b)
-                { /* STARTDT_CON */
-                    DebugLog("RCVD STARTDT_CON");
+                { 
+                    //接收到初始化链路确认命令 发送总召唤
+                    DebugLog("RCVD 启动链路确认报文:" + BitConverter.ToString(buffer, 0, msgSize));
                     //发送总召唤命令
+                    DebugLog("SEND 总召唤命令:"+BitConverter.ToString(C_IC_NA_1_MSG,0, C_IC_NA_1_MSG.Length) );
                     netStream.Write(C_IC_NA_1_MSG, 0, C_IC_NA_1_MSG.Length);
-                    sendSequenceNumber = (sendSequenceNumber + 1) % 32768;
                     statistics.SentMsgCounter++;
-                    unconfirmedReceivedIMessages = 0;
-                    timeoutT2Triggered = false;
                     if (connectionHandler != null)
                         connectionHandler(connectionHandlerParameter, ConnectionEvent.STARTDT_CON_RECEIVED);
                 }
                 else if (buffer[2] == 0x23)
                 { /* STOPDT_CON */
-                    DebugLog("RCVD STOPDT_CON");
-
+                    DebugLog("RCVD 链路断开报文:" + BitConverter.ToString(buffer, 0, msgSize));
                     if (connectionHandler != null)
+                    {
                         connectionHandler(connectionHandlerParameter, ConnectionEvent.STOPDT_CON_RECEIVED);
+                    }
                 }
-
             }
             else
             {
@@ -1276,15 +1221,12 @@ namespace lib60870.CS104
             // Create a TCP/IP  socket.
             socket = new Socket(AddressFamily.InterNetwork,
                 SocketType.Stream, ProtocolType.Tcp);
-
-            var result = socket.BeginConnect(remoteEP, null, null);
-
-            bool success = result.AsyncWaitHandle.WaitOne(connectTimeoutInMs, true);
+            var result = socket.ConnectAsync(remoteEP);
+            bool success = result.Wait(connectTimeoutInMs);
             if (success)
             {
                 try
                 {
-                    socket.EndConnect(result);
                     socket.NoDelay = true;
                     netStream = new NetworkStream(socket);
                 }
@@ -1311,7 +1253,6 @@ namespace lib60870.CS104
                 if (outStandingTestFRConMessages > 2)
                 {
                     DebugLog("Timeout for TESTFR_CON message");
-                    // close connection
                     return false;
                 }
                 else
@@ -1334,10 +1275,8 @@ namespace lib60870.CS104
                 if (checkConfirmTimeout((long)currentTime))
                 {
                     lastConfirmationTime = (long)currentTime;
-
                     unconfirmedReceivedIMessages = 0;
                     timeoutT2Triggered = false;
-
                     SendSMessage(); /* send confirmation message */
                 }
             }
@@ -1381,54 +1320,7 @@ namespace lib60870.CS104
             }
             else
                 return false;
-        }
-        private bool CertificateValidation(Object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            if (certificate != null)
-            {
-
-                if (tlsSecInfo.ChainValidation)
-                {
-
-                    X509Chain newChain = new X509Chain();
-
-                    newChain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-                    newChain.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-                    newChain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-                    newChain.ChainPolicy.VerificationTime = DateTime.Now;
-
-                    foreach (X509Certificate2 caCert in tlsSecInfo.CaCertificates)
-                        newChain.ChainPolicy.ExtraStore.Add(caCert);
-
-                    bool certificateStatus = newChain.Build(new X509Certificate2(certificate.GetRawCertData()));
-
-                    if (certificateStatus == false)
-                        return false;
-                }
-
-                if (tlsSecInfo.AllowOnlySpecificCertificates)
-                {
-
-                    foreach (X509Certificate2 allowedCert in tlsSecInfo.AllowedCertificates)
-                    {
-                        if (AreByteArraysEqual(allowedCert.GetCertHash(), certificate.GetCertHash()))
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                }
-
-                return true;
-            }
-            else
-                return false;
-        }
-        public X509Certificate LocalCertificateSelectionCallback(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers)
-        {
-            return localCertificates[0];
-        }
+        }    
         private void HandleConnection()
         {
             byte[] bytes = new byte[300];
@@ -1439,60 +1331,13 @@ namespace lib60870.CS104
                     connecting = true;
                     try
                     {
-                        // Connect to a remote device.
                         ConnectSocketWithTimeout();
-                        DebugLog("Socket connected to " + socket.RemoteEndPoint.ToString());
-                        if (tlsSecInfo != null)
-                        {
-                            DebugLog("Setup TLS");
-                            SslStream sslStream = new SslStream(netStream, true, CertificateValidation, LocalCertificateSelectionCallback);
-                            var clientCertificateCollection = new X509Certificate2Collection(tlsSecInfo.OwnCertificate);
-                            try
-                            {
-                                string targetHostName = tlsSecInfo.TargetHostName;
-
-                                if (targetHostName == null)
-                                    targetHostName = "*";
-
-                                sslStream.AuthenticateAsClient(targetHostName, clientCertificateCollection, System.Security.Authentication.SslProtocols.Tls, false);
-                            }
-                            catch (IOException e)
-                            {
-
-                                Console.WriteLine(e.ToString());
-                                Console.WriteLine(e.StackTrace);
-
-                                string message;
-
-                                if (e.GetBaseException() != null)
-                                {
-                                    message = e.GetBaseException().Message;
-                                }
-                                else
-                                {
-                                    message = e.Message;
-                                }
-
-                                DebugLog("TLS authentication error: " + message);
-
-                                throw new SocketException(10060);
-                            }
-
-                            if (sslStream.IsAuthenticated)
-                            {
-                                netStream = sslStream;
-                            }
-                            else
-                            {
-                                throw new SocketException(10060);
-                            }
-
-                        }
+                        DebugLog("网关机连接至: " + socket.RemoteEndPoint.ToString());
                         netStream.ReadTimeout = 50;
                         if (autostart)
                         {
-                            //启动数据传输 [0x68,0x04,0x07,0x00,0x00,0x00]
-                            netStream.Write(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
+                            DebugLog("SEND 启动链路命令报文:"+BitConverter.ToString(STARTDT_ACT_MSG));
+                            netStream.WriteAsync(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
                             statistics.SentMsgCounter++;
                         }
                         running = true;
@@ -1521,7 +1366,7 @@ namespace lib60870.CS104
                                 int bytesRec = receiveMessage(bytes);
                                 if (bytesRec > 0)
                                 {
-                                    DebugLog("RCVD: " + BitConverter.ToString(bytes, 0, bytesRec));
+                                    //DebugLog("RCVD: " + BitConverter.ToString(bytes, 0, bytesRec));
                                     statistics.RcvdMsgCounter++;
                                     bool handleMessage = true;
                                     if (recvRawMessageHandler != null)
@@ -1530,7 +1375,6 @@ namespace lib60870.CS104
                                     {
                                         if (checkMessage(bytes, bytesRec) == false)
                                         {
-                                            /* close connection on error */
                                             loopRunning = false;
                                         }
                                     }
@@ -1567,7 +1411,7 @@ namespace lib60870.CS104
                             {
                                 DebugLog("IOException: " + e.ToString());
                                 loopRunning = false;
-                            }
+                            } 
                             catch (ConnectionException)
                             {
                                 loopRunning = false;
@@ -1601,16 +1445,12 @@ namespace lib60870.CS104
                 catch (Exception e)
                 {
                     DebugLog("Unexpected exception: " + e.ToString());
-                    throw e;
                 }
-
             }
             catch (Exception e)
             {
                 DebugLog(e.ToString());
-                throw e;
             }
-
             running = false;
             connecting = false;
         }
@@ -1631,7 +1471,6 @@ namespace lib60870.CS104
             if (running)
             {
                 running = false;
-                workerThread.Join();
             }
         }
         /// <summary>
@@ -1655,6 +1494,11 @@ namespace lib60870.CS104
             connectionHandler = handler;
             connectionHandlerParameter = parameter;
         }
+
+        public void SetDebugOutputHandler(DebugOutputHandler handler)
+        {
+            this.debugOutputHandler = handler;
+        }
         /// <summary>
         /// Sets the raw message handler. This is a callback to intercept raw messages received.
         /// </summary>
@@ -1675,6 +1519,8 @@ namespace lib60870.CS104
             sentMessageHandler = handler;
             sentMessageHandlerParameter = parameter;
         }
+
+
         /// <summary>
         /// Determines whether the transmit (send) buffer is full. If true the next send command will throw a ConnectionException
         /// </summary>

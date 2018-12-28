@@ -6,4 +6,3 @@ E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Rel
 E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Release\netcoreapp2.1\lib60870.NET.CORE.2.0.AssemblyInfo.cs
 E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Release\netcoreapp2.1\lib60870.NET.CORE.2.0.dll
 E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Release\netcoreapp2.1\lib60870.NET.CORE.2.0.pdb
-E:\git\lib60870.NET\core\2.0\lib60870.NET.CORE.2.0\lib60870.NET.CORE.2.0\obj\Release\netcoreapp2.1\lib60870.NET.CORE.2.0.csprojAssemblyReference.cache
