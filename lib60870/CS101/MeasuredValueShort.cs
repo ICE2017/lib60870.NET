@@ -48,9 +48,9 @@ namespace lib60870.CS101
             }
         }
 
-        private double value;
+        private float value;
 
-        public double Value
+        public float Value
         {
             get
             {

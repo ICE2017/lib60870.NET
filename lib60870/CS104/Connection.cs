@@ -191,7 +191,6 @@ namespace lib60870.CS104
             // required for T1 timeout
             public int seqNo;
         }
-
         private int maxSentASDUs;
         /* maximum number of ASDU to be sent without confirmation - parameter k */
         private int oldestSentASDU = -1;
@@ -202,9 +201,7 @@ namespace lib60870.CS104
         /* the k-buffer */
 
         /**********************************************/
-
         private bool checkSequenceNumbers = true;
-
         private Queue<ASDU> waitingToBeSent = null;
         private bool useSendMessageQueue = true;
 
@@ -231,7 +228,6 @@ namespace lib60870.CS104
         private bool running = false;
         private bool connecting = false;
         private bool socketError;
-        private SocketException lastException;
 
         private static int connectionCounter = 0;
         private int connectionID;
@@ -323,8 +319,6 @@ namespace lib60870.CS104
                 this.autostart = value;
             }
         }
-
-
         private void DebugLog(string message)
         {
             if (debugOutput)
@@ -339,9 +333,7 @@ namespace lib60870.CS104
                 }
             }
         }
-
         private ConnectionStatistics statistics = new ConnectionStatistics();
-
         private void ResetConnection()
         {
             sendSequenceNumber = 0;
@@ -354,7 +346,6 @@ namespace lib60870.CS104
             uMessageTimeout = 0;
 
             socketError = false;
-            lastException = null;
 
             maxSentASDUs = apciParameters.K;
             oldestSentASDU = -1;
@@ -366,10 +357,7 @@ namespace lib60870.CS104
 
             statistics.Reset();
         }
-
         private int connectTimeoutInMs = 1000;
-
-
         public ApplicationLayerParameters Parameters
         {
             get
@@ -381,16 +369,12 @@ namespace lib60870.CS104
         private ASDUReceivedHandler asduReceivedHandler = null;
         private DebugOutputHandler debugOutputHandler = null;
         private object asduReceivedHandlerParameter = null;
-
         private ConnectionHandler connectionHandler = null;
         private object connectionHandlerParameter = null;
-
         private RawMessageHandler recvRawMessageHandler = null;
         private object recvRawMessageHandlerParameter = null;
-
         private RawMessageHandler sentMessageHandler = null;
         private object sentMessageHandlerParameter = null;
-
         private void SendSMessage()
         {
             byte[] msg = new byte[6];
@@ -411,7 +395,6 @@ namespace lib60870.CS104
                 sentMessageHandler(sentMessageHandlerParameter, msg, 6);
             }
         }
-
         private bool CheckSequenceNumber(int seqNo)
         {
             if (checkSequenceNumbers)
@@ -491,7 +474,6 @@ namespace lib60870.CS104
             }
             return true;
         }
-
         private bool IsSentBufferFull()
         {
 
@@ -503,7 +485,6 @@ namespace lib60870.CS104
             else
                 return false;
         }
-
         private int SendIMessage(ASDU asdu)
         {
             BufferFrame frame = new BufferFrame(new byte[260], 6); /* reserve space for ACPI */
@@ -532,13 +513,9 @@ namespace lib60870.CS104
             }
             else
             {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
+                return -1;
             }
         }
-
         private void PrintSendBuffer()
         {
             if (oldestSentASDU != -1)
@@ -562,7 +539,6 @@ namespace lib60870.CS104
 
             }
         }
-
         private void SendIMessageAndUpdateSentASDUs(ASDU asdu)
         {
             lock (sentASDUs)
@@ -587,7 +563,6 @@ namespace lib60870.CS104
                 PrintSendBuffer();
             }
         }
-
         private bool SendNextWaitingASDU()
         {
             bool sentAsdu = false;
@@ -673,7 +648,6 @@ namespace lib60870.CS104
         {
             Setup(hostname, new APCIParameters(), new ApplicationLayerParameters(), tcpPort);
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="lib60870.CS104.Connection"/> class.
         /// </summary>
@@ -684,7 +658,6 @@ namespace lib60870.CS104
         {
             Setup(hostname, apciParameters.Clone(), alParameters.Clone(), 2404);
         }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="lib60870.CS104.Connection"/> class.
         /// </summary>
@@ -696,7 +669,6 @@ namespace lib60870.CS104
         {
             Setup(hostname, apciParameters.Clone(), alParameters.Clone(), tcpPort);
         }
-
         /// <summary>
         /// Gets the conenction statistics.
         /// </summary>
@@ -705,7 +677,6 @@ namespace lib60870.CS104
         {
             return this.statistics;
         }
-
         /// <summary>
         /// Sets the connect timeout
         /// </summary>
@@ -714,7 +685,6 @@ namespace lib60870.CS104
         {
             this.connectTimeoutInMs = millies;
         }
-
         /// <summary>
         /// Sends the interrogation command.
         /// </summary>
@@ -728,7 +698,6 @@ namespace lib60870.CS104
             asdu.AddInformationObject(new InterrogationCommand(0, qoi));
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends the counter interrogation command (C_CI_NA_1 typeID: 101)
         /// </summary>
@@ -742,7 +711,6 @@ namespace lib60870.CS104
             asdu.AddInformationObject(new CounterInterrogationCommand(0, qcc));
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends a read command (C_RD_NA_1 typeID: 102).
         /// </summary>
@@ -761,7 +729,6 @@ namespace lib60870.CS104
 
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends a clock synchronization command (C_CS_NA_1 typeID: 103).
         /// </summary>
@@ -776,7 +743,6 @@ namespace lib60870.CS104
 
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends a test command (C_TS_NA_1 typeID: 104).
         /// </summary>
@@ -793,7 +759,6 @@ namespace lib60870.CS104
 
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends a test command with CP56Time2a time (C_TS_TA_1 typeID: 107).
         /// </summary>
@@ -807,7 +772,6 @@ namespace lib60870.CS104
             asdu.AddInformationObject(new TestCommandWithCP56Time2a(tsc, time));
             SendASDUInternal(asdu);
         }
-
         /// <summary>
         /// Sends a reset process command (C_RP_NA_1 typeID: 105).
         /// </summary>
@@ -887,13 +851,6 @@ namespace lib60870.CS104
                     sentMessageHandler(sentMessageHandlerParameter, STARTDT_ACT_MSG, 6);
                 }
             }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
-            }
         }
         /// <summary>
         /// Stop data transmission on this connection
@@ -910,13 +867,6 @@ namespace lib60870.CS104
                     sentMessageHandler(sentMessageHandlerParameter, STOPDT_ACT_MSG, 6);
                 }
             }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
-            }
         }
         protected void SendStartDT_CON()
         {
@@ -928,13 +878,6 @@ namespace lib60870.CS104
                 {
                     sentMessageHandler(sentMessageHandlerParameter, STARTDT_CON_MSG, 6);
                 }
-            }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
         protected void SendStopDT_CON()
@@ -948,13 +891,6 @@ namespace lib60870.CS104
                     sentMessageHandler(sentMessageHandlerParameter, STOPDT_CON_MSG, 6);
                 }
             }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
-            }
         }
         protected void SendTestFR_ACT()
         {
@@ -966,13 +902,6 @@ namespace lib60870.CS104
                 {
                     sentMessageHandler(sentMessageHandlerParameter, TESTFR_ACT_MSG, 6);
                 }
-            }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
             }
         }
         protected void SendTestFR_CON()
@@ -986,13 +915,6 @@ namespace lib60870.CS104
                     sentMessageHandler(sentMessageHandlerParameter, TESTFR_CON_MSG, 6);
                 }
             }
-            else
-            {
-                if (lastException != null)
-                    throw new ConnectionException(lastException.Message, lastException);
-                else
-                    throw new ConnectionException("not connected", new SocketException(10057));
-            }
         }
         /// <summary>
         /// Connect this instance.
@@ -1003,8 +925,6 @@ namespace lib60870.CS104
         public void Connect()
         {
             ConnectAsync();
-            if (socketError)
-                throw new ConnectionException(lastException.Message, lastException);
         }
         private void ResetT3Timeout()
         {
@@ -1023,7 +943,7 @@ namespace lib60870.CS104
                 ResetT3Timeout();
                 Task.Run(() => {
                     HandleConnection();
-                });
+                }).Wait();
             }
             else
             {
@@ -1031,7 +951,6 @@ namespace lib60870.CS104
                     throw new ConnectionException("already connected", new SocketException(10056)); /* WSAEISCONN - Socket is already connected */
                 else
                     throw new ConnectionException("already connecting", new SocketException(10037)); /* WSAEALREADY - Operation already in progress */
-
             }
         }
         private int receiveMessage(byte[] buffer)
@@ -1057,7 +976,6 @@ namespace lib60870.CS104
                 }
                 readLength = length + 2;
             }
-
             return readLength;
         }
         private bool checkConfirmTimeout(long currentTime)
@@ -1324,135 +1242,99 @@ namespace lib60870.CS104
         private void HandleConnection()
         {
             byte[] bytes = new byte[300];
+            connecting = true;
             try
             {
+                ConnectSocketWithTimeout();
+                DebugLog("网关机连接至: " + socket.RemoteEndPoint.ToString());
+                netStream.ReadTimeout = 50;
+                if (autostart)
+                {
+                    DebugLog("SEND 启动链路命令报文:" + BitConverter.ToString(STARTDT_ACT_MSG));
+                    netStream.WriteAsync(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
+                    statistics.SentMsgCounter++;
+                }
+                running = true;
+                socketError = false;
+                connecting = false;
+                if (connectionHandler != null)
+                    connectionHandler(connectionHandlerParameter, ConnectionEvent.OPENED);
+
+                if (running)
+                {
+                    bool loopRunning = running;
+                    while (loopRunning)
+                    {
+                        bool suspendThread = true;
+                        int bytesRec = receiveMessage(bytes);
+                        if (bytesRec > 0)
+                        {
+                            statistics.RcvdMsgCounter++;
+                            bool handleMessage = true;
+                            if (recvRawMessageHandler != null)
+                                handleMessage = recvRawMessageHandler(recvRawMessageHandlerParameter, bytes, bytesRec);
+                            if (handleMessage)
+                            {
+                                if (checkMessage(bytes, bytesRec) == false)
+                                {
+                                    loopRunning = false;
+                                    throw new Exception("CheckMessage Error");
+                                }
+                            }
+                            if (unconfirmedReceivedIMessages >= apciParameters.W)
+                            {
+                                lastConfirmationTime = SystemUtils.currentTimeMillis();
+                                unconfirmedReceivedIMessages = 0;
+                                timeoutT2Triggered = false;
+                                SendSMessage();
+                            }
+                            suspendThread = false;
+                        }
+                        else if (bytesRec == -1)
+                            loopRunning = false;
+                        if (handleTimeouts() == false)
+                            loopRunning = false;
+                        if (useSendMessageQueue)
+                        {
+                            if (SendNextWaitingASDU() == true)
+                            {
+                                suspendThread = false;
+                            }
+                        }
+                        if (suspendThread)
+                            Thread.Sleep(1);
+                    }
+                }
+            }
+            catch (SocketException se)
+            {
+                DebugLog("SocketException: " + se.ToString());
+                socketError = true;
+                running = false;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                DebugLog("SocketException: " + ex.ToString());
+                running = false;
+                throw;
+            }
+            finally
+            {
+                // Release the socket.
                 try
                 {
-                    connecting = true;
-                    try
-                    {
-                        ConnectSocketWithTimeout();
-                        DebugLog("网关机连接至: " + socket.RemoteEndPoint.ToString());
-                        netStream.ReadTimeout = 50;
-                        if (autostart)
-                        {
-                            DebugLog("SEND 启动链路命令报文:"+BitConverter.ToString(STARTDT_ACT_MSG));
-                            netStream.WriteAsync(STARTDT_ACT_MSG, 0, STARTDT_ACT_MSG.Length);
-                            statistics.SentMsgCounter++;
-                        }
-                        running = true;
-                        socketError = false;
-                        connecting = false;
-                        if (connectionHandler != null)
-                            connectionHandler(connectionHandlerParameter, ConnectionEvent.OPENED);
-                    }
-                    catch (SocketException se)
-                    {
-                        DebugLog("SocketException: " + se.ToString());
-                        socketError = true;
-                        lastException = se;
-                        if (connectionHandler != null)
-                            connectionHandler(connectionHandlerParameter, ConnectionEvent.CONNECT_FAILED);
-                    }
-                    if (running)
-                    {
-                        bool loopRunning = running;
-                        while (loopRunning)
-                        {
-                            bool suspendThread = true;
-                            try
-                            {
-                                // Receive a message from from the remote device.
-                                int bytesRec = receiveMessage(bytes);
-                                if (bytesRec > 0)
-                                {
-                                    //DebugLog("RCVD: " + BitConverter.ToString(bytes, 0, bytesRec));
-                                    statistics.RcvdMsgCounter++;
-                                    bool handleMessage = true;
-                                    if (recvRawMessageHandler != null)
-                                        handleMessage = recvRawMessageHandler(recvRawMessageHandlerParameter, bytes, bytesRec);
-                                    if (handleMessage)
-                                    {
-                                        if (checkMessage(bytes, bytesRec) == false)
-                                        {
-                                            loopRunning = false;
-                                        }
-                                    }
-                                    if (unconfirmedReceivedIMessages >= apciParameters.W)
-                                    {
-                                        lastConfirmationTime = SystemUtils.currentTimeMillis();
-                                        unconfirmedReceivedIMessages = 0;
-                                        timeoutT2Triggered = false;
-                                        SendSMessage();
-                                    }
-                                    suspendThread = false;
-                                }
-                                else if (bytesRec == -1)
-                                    loopRunning = false;
-                                if (handleTimeouts() == false)
-                                    loopRunning = false;
-
-                                if (isConnected() == false)
-                                    loopRunning = false;
-
-                                if (useSendMessageQueue)
-                                {
-                                    if (SendNextWaitingASDU() == true)
-                                        suspendThread = false;
-                                }
-                                if (suspendThread)
-                                    Thread.Sleep(1);
-                            }
-                            catch (SocketException)
-                            {
-                                loopRunning = false;
-                            }
-                            catch (System.IO.IOException e)
-                            {
-                                DebugLog("IOException: " + e.ToString());
-                                loopRunning = false;
-                            } 
-                            catch (ConnectionException)
-                            {
-                                loopRunning = false;
-                            }
-                        }
-                        DebugLog("CLOSE CONNECTION!");
-                        // Release the socket.
-                        try
-                        {
-                            socket.Shutdown(SocketShutdown.Both);
-                        }
-                        catch (SocketException)
-                        {
-                        }
-                        socket.Close();
-                        netStream.Dispose();
-                        this.running = false;
-                        if (connectionHandler != null)
-                            connectionHandler(connectionHandlerParameter, ConnectionEvent.CLOSED);
-                    }
+                    socket.Shutdown(SocketShutdown.Both);
                 }
-                catch (ArgumentNullException ane)
+                catch (SocketException)
                 {
-                    connecting = false;
-                    DebugLog("ArgumentNullException: " + ane.ToString());
                 }
-                catch (SocketException se)
-                {
-                    DebugLog("SocketException: " + se.ToString());
-                }
-                catch (Exception e)
-                {
-                    DebugLog("Unexpected exception: " + e.ToString());
-                }
-            }
-            catch (Exception e)
-            {
-                DebugLog(e.ToString());
-            }
-            running = false;
-            connecting = false;
+                socket.Close();
+                netStream.Dispose();
+                this.running = false;
+                if (connectionHandler != null)
+                    connectionHandler(connectionHandlerParameter, ConnectionEvent.CLOSED);
+            }               
         }
         public bool IsRunning
         {
@@ -1494,7 +1376,6 @@ namespace lib60870.CS104
             connectionHandler = handler;
             connectionHandlerParameter = parameter;
         }
-
         public void SetDebugOutputHandler(DebugOutputHandler handler)
         {
             this.debugOutputHandler = handler;
@@ -1519,8 +1400,6 @@ namespace lib60870.CS104
             sentMessageHandler = handler;
             sentMessageHandlerParameter = parameter;
         }
-
-
         /// <summary>
         /// Determines whether the transmit (send) buffer is full. If true the next send command will throw a ConnectionException
         /// </summary>

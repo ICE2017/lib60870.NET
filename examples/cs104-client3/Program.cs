@@ -40,8 +40,6 @@ namespace cs104_client3
                             for (int i = 0; i < asdu.NumberOfElements; i++)
                             {
                                 var mfv = (MeasuredValueShort)asdu.GetElement(i);
-                           //     Console.Write("点位地址:" + mfv.ObjectAddress + " 氧气流量：" + mfv.Value);
-
                             }
                         }
                         else
